@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sisu Investment Holdings · Advisory Board Dashboard · Q2 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --midnight: #191970;
+  --twilight: #3030AF;
+  --seafoam: #2BBF6C;
+  --emerald: #2E8B57;
+  --charcoal: #333333;
+  --platinum: #E5E4E2;
+  --white: #FFFFFF;
+  --warm: #F7F6F3;
+  --warm2: #EEEDE9;
+  --muted: #777672;
+  --border: #E5E4E2;
+  --amber: #C8841A;
+  --rose: #B83232;
+  --text1: #191970;
+  --text2: #333333;
+  --text3: #777672;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text2);min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.header{
+  background:var(--midnight);
+  padding:0 40px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:3px solid var(--seafoam);
+}
+.header-inner{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:60px;
+  gap:24px;
+}
+.header-brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-shrink:0;
+}
+.brand-mark{
+  width:32px;height:32px;
+  background:var(--seafoam);
+  border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.brand-mark svg{width:16px;height:16px;}
+.brand-name{
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#fff;
+}
+.brand-sep{width:1px;height:18px;background:rgba(255,255,255,.2);}
+.brand-period{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--seafoam);
+}
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.header-badge{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  padding:5px 12px;
+  border-radius:3px;
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.5);
+}
+.header-live{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--seafoam);
+  padding:5px 12px;
+  border:1px solid rgba(43,191,108,.3);
+  border-radius:3px;
+  background:rgba(43,191,108,.08);
+}
+.header-live::before{
+  content:'';width:6px;height:6px;
+  border-radius:50%;
+  background:var(--seafoam);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* TABS */
+.tabs-bar{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  position:sticky;
+  top:63px;
+  z-index:99;
+  box-shadow:0 1px 4px rgba(25,25,112,.06);
+}
+.tabs-inner{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs-inner::-webkit-scrollbar{display:none;}
+.tab-btn{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:0 20px;
+  height:48px;
+  background:transparent;
+  border:none;
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.tab-btn:hover{color:var(--twilight);}
+.tab-btn.active{
+  color:var(--midnight);
+  border-bottom-color:var(--seafoam);
+  font-weight:500;
+}
+.tab-count{
+  background:rgba(43,191,108,.15);
+  color:var(--emerald);
+  padding:2px 7px;
+  border-radius:10px;
+  font-size:9px;
+}
+
+/* BODY */
+.body{max-width:1400px;margin:0 auto;padding:28px 40px 80px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* KPI ROW */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.kpi-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:20px 22px;
+  border-top:3px solid var(--platinum);
+  transition:border-top-color .2s,box-shadow .2s;
+}
+.kpi-card:hover{
+  border-top-color:var(--seafoam);
+  box-shadow:0 2px 8px rgba(25,25,112,.07);
+}
+.kpi-label{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.kpi-value{
+  font-family:'Playfair Display',serif;
+  font-size:30px;
+  font-weight:700;
+  line-height:1;
+  margin-bottom:5px;
+}
+.kpi-value.midnight{color:var(--midnight);}
+.kpi-value.seafoam{color:var(--emerald);}
+.kpi-value.rose{color:var(--rose);}
+.kpi-sub{font-size:11px;color:var(--muted);}
+.kpi-trend{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.06em;
+  margin-top:8px;
+  padding:3px 8px;
+  border-radius:2px;
+}
+.kpi-trend.up{background:rgba(46,139,87,.1);color:var(--emerald);}
+.kpi-trend.watch{background:rgba(200,132,26,.1);color:var(--amber);}
+.kpi-trend.down{background:rgba(184,50,50,.1);color:var(--rose);}
+
+/* CARDS */
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:22px 24px;
+}
+.card-title{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.card-title-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card-title-left::before{
+  content:'';
+  width:3px;height:13px;
+  background:var(--seafoam);
+  border-radius:1px;
+}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.col-6-4{display:grid;grid-template-columns:6fr 4fr;gap:16px;}
+
+/* BADGES */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:4px 10px;
+  border-radius:2px;
+  white-space:nowrap;
+}
+.badge::before{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.badge.complete{background:rgba(46,139,87,.1);color:var(--emerald);border:1px solid rgba(46,139,87,.25);}
+.badge.complete::before{background:var(--emerald);}
+.badge.progress{background:rgba(200,132,26,.1);color:var(--amber);border:1px solid rgba(200,132,26,.25);}
+.badge.progress::before{background:var(--amber);}
+.badge.active{background:rgba(43,191,108,.12);color:var(--emerald);border:1px solid rgba(43,191,108,.3);}
+.badge.active::before{background:var(--seafoam);}
+.badge.watch{background:rgba(200,132,26,.1);color:var(--amber);border:1px solid rgba(200,132,26,.25);}
+.badge.watch::before{background:var(--amber);}
+.badge.planned{background:var(--warm2);color:var(--muted);border:1px solid var(--border);}
+.badge.planned::before{background:var(--muted);}
+.badge.building{background:rgba(48,48,175,.1);color:var(--twilight);border:1px solid rgba(48,48,175,.2);}
+.badge.building::before{background:var(--twilight);}
+.badge.priority{background:var(--midnight);color:#fff;border:1px solid var(--midnight);}
+.badge.priority::before{background:var(--seafoam);}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:10px;}
+.prog-label{
+  display:flex;
+  justify-content:space-between;
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--text2);
+  margin-bottom:5px;
+}
+.prog-bar-bg{height:4px;background:var(--warm2);border-radius:2px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:2px;background:var(--seafoam);}
+
+/* STATUS TABLE */
+.status-table{width:100%;border-collapse:collapse;}
+.status-table tbody tr{border-bottom:1px solid var(--border);}
+.status-table tbody tr:last-child{border-bottom:none;}
+.status-table tbody tr:hover{background:var(--warm);}
+.status-table td{padding:11px 0;font-size:13px;color:var(--text2);vertical-align:middle;line-height:1.4;}
+.status-table td:first-child{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  width:30px;
+}
+.status-table td:last-child{text-align:right;width:110px;}
+
+/* ROADMAP TABLE */
+.roadmap-table{width:100%;border-collapse:collapse;}
+.roadmap-table thead tr{background:var(--midnight);}
+.roadmap-table th{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.5);
+  padding:12px 18px;
+  text-align:left;
+  font-weight:400;
+}
+.roadmap-table th:first-child{color:rgba(255,255,255,.8);width:130px;}
+.roadmap-table tbody tr{border-bottom:1px solid var(--border);}
+.roadmap-table tbody tr:nth-child(even) td{background:var(--warm);}
+.roadmap-table td{padding:14px 18px;font-size:13px;color:var(--text2);vertical-align:top;line-height:1.6;}
+.roadmap-table td:first-child{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--midnight);
+  font-weight:500;
+  border-right:2px solid var(--seafoam);
+  background:#fff;
+}
+
+/* CHART */
+.chart-wrap{position:relative;height:200px;}
+.chart-wrap.tall{height:230px;}
+
+/* OGSM */
+.ogsm-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:16px;
+}
+.ogsm-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-top:3px solid var(--amber);
+  border-radius:6px;
+  padding:18px 20px;
+}
+.ogsm-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.ogsm-code{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.ogsm-head{font-size:14px;font-weight:500;color:var(--midnight);margin-bottom:7px;line-height:1.3;}
+.ogsm-detail{font-size:12px;color:var(--muted);line-height:1.65;font-style:italic;}
+
+/* BRANDS */
+.brand-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.brand-row:last-child{border-bottom:none;}
+.brand-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.brand-name-t{font-size:13px;font-weight:500;color:var(--midnight);min-width:95px;}
+.brand-desc-t{font-size:12px;color:var(--muted);}
+
+/* HK ROWS */
+.hk-row{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.hk-row:last-child{border-bottom:none;}
+.hk-icon{
+  width:30px;height:30px;
+  border-radius:4px;
+  background:var(--warm);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  font-size:13px;
+  color:var(--midnight);
+  font-weight:500;
+  font-family:'DM Mono',monospace;
+}
+.hk-label{font-size:13px;font-weight:500;color:var(--midnight);margin-bottom:2px;}
+.hk-text{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* LETTER */
+.letter-card{
+  background:var(--midnight);
+  border-radius:6px;
+  padding:24px 28px;
+}
+.letter-tag{
+  font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--seafoam);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.letter-tag::before{content:'';width:16px;height:1px;background:var(--seafoam);}
+.letter-quote{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-style:italic;
+  color:rgba(255,255,255,.85);
+  line-height:1.5;margin-bottom:16px;
+}
+.letter-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.lm-item{display:flex;flex-direction:column;gap:3px;}
+.lm-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.lm-val{font-size:12px;color:rgba(255,255,255,.65);}
+
+/* BANK CARDS */
+.bank-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-top:3px solid var(--border);
+  border-radius:6px;
+  padding:20px 22px;
+  transition:border-top-color .2s;
+}
+.bank-card:hover{border-top-color:var(--seafoam);}
+.bank-name{
+  font-family:'Playfair Display',serif;
+  font-size:19px;font-weight:700;
+  color:var(--midnight);
+  margin-bottom:3px;
+}
+.bank-contact{font-size:11px;color:var(--muted);margin-bottom:12px;font-style:italic;}
+.bank-note{font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* CAPITAL STACK */
+.cap-row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 20px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+}
+.cap-row:last-child{border-bottom:none;}
+.cap-num{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:10px;
+  flex-shrink:0;
+}
+.cap-num.active{background:rgba(43,191,108,.15);color:var(--emerald);border:1px solid rgba(43,191,108,.3);}
+.cap-num.building{background:rgba(48,48,175,.1);color:var(--twilight);border:1px solid rgba(48,48,175,.2);}
+.cap-num.planned{background:var(--warm2);color:var(--muted);border:1px solid var(--border);}
+.cap-name{font-size:13px;font-weight:500;color:var(--midnight);}
+.cap-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* SECTION DIVIDER */
+.sec-div{
+  font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);
+  margin:20px 0 12px;
+  display:flex;align-items:center;gap:10px;
+}
+.sec-div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SEQUENCING */
+.sequencing{
+  background:var(--midnight);
+  border-radius:6px;
+  padding:16px 20px;
+  margin-top:16px;
+}
+.seq-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--seafoam);margin-bottom:6px;}
+.seq-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.65;}
+
+/* DEAL DISCIPLINE */
+.discipline{
+  background:var(--warm);
+  border:1px solid var(--border);
+  border-left:4px solid var(--midnight);
+  border-radius:0 6px 6px 0;
+  padding:16px 20px;
+  margin-top:16px;
+}
+.disc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--midnight);margin-bottom:8px;}
+.disc-items{display:flex;flex-wrap:wrap;gap:6px 24px;}
+.disc-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);}
+.disc-item::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--seafoam);flex-shrink:0;}
+
+/* OVERVIEW HERO */
+.overview-hero{
+  background:var(--midnight);
+  border-radius:6px;
+  padding:28px 36px;
+  margin-bottom:20px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:40px;
+  align-items:center;
+}
+.ov-quote{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-style:italic;
+  color:rgba(255,255,255,.7);
+  line-height:1.65;
+  max-width:580px;
+}
+.ov-kicker{
+  font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--seafoam);
+  margin-bottom:10px;
+}
+.ov-stats{display:flex;gap:36px;flex-shrink:0;}
+.ov-stat{text-align:center;}
+.ov-num{
+  font-family:'Playfair Display',serif;
+  font-size:34px;font-weight:700;
+  color:var(--seafoam);
+  line-height:1;margin-bottom:4px;
+}
+.ov-num.amber{color:#F0A830;}
+.ov-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+
+/* THROUGHLINES */
+.through-row{
+  background:#fff;
+  padding:20px 28px;
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:28px;
+  align-items:start;
+  border-bottom:1px solid var(--border);
+}
+.through-row:last-child{border-bottom:none;}
+.through-track{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--seafoam);
+  padding-top:2px;font-weight:500;
+}
+.through-text{font-size:13px;color:var(--text2);line-height:1.7;}
+
+@media(max-width:900px){
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3,.col-6-4,.ogsm-grid{grid-template-columns:1fr;}
+  .overview-hero{grid-template-columns:1fr;}
+  .ov-stats{justify-content:flex-start;}
+  .body,.header,.tabs-bar{padding-left:20px;padding-right:20px;}
+  .through-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 16 16" fill="none">
+          <path d="M8 2L14 13H2L8 2Z" fill="#191970"/>
+        </svg>
+      </div>
+      <span class="brand-name">Sisu Investment Holdings</span>
+      <div class="brand-sep"></div>
+      <span class="brand-period">Advisory Board · Q2 2026</span>
+    </div>
+    <div class="header-right">
+      <span class="header-badge">April 23, 2026</span>
+      <span class="header-badge">Confidential</span>
+      <span class="header-live">Q2 Dashboard</span>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+    <button class="tab-btn" onclick="switchTab('venus',this)">Venus 2026 <span class="tab-count">4</span></button>
+    <button class="tab-btn" onclick="switchTab('roadmap',this)">Roadmap</button>
+    <button class="tab-btn" onclick="switchTab('pipeline',this)">Deal Pipeline</button>
+    <button class="tab-btn" onclick="switchTab('banking',this)">Banking &amp; Capital <span class="tab-count">3</span></button>
+    <button class="tab-btn" onclick="switchTab('actions',this)">Q1 Actions <span class="tab-count">8</span></button>
+  </div>
+</nav>
+
+<div class="body">
+
+<!-- OVERVIEW -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="overview-hero">
+    <div>
+      <div class="ov-kicker">Q2 2026 · Quarterly Summary</div>
+      <div class="ov-quote">"Build a disciplined, reliable, and scalable operating company that delivers $25M+ in revenue and 15–18% profit margins, while eliminating operational friction, surprises, and reliance on heroics."</div>
+    </div>
+    <div class="ov-stats">
+      <div class="ov-stat"><div class="ov-num">6/8</div><div class="ov-label">Q1 Items<br>Complete</div></div>
+      <div class="ov-stat"><div class="ov-num amber">Watch</div><div class="ov-label">OGSM<br>Status</div></div>
+      <div class="ov-stat"><div class="ov-num">3</div><div class="ov-label">Active<br>Banking</div></div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">YTD Net Sales</div>
+      <div class="kpi-value midnight">$2.87M</div>
+      <div class="kpi-sub">Q1 2026 Actual</div>
+      <div class="kpi-trend watch">Peak season ahead</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">YTD Gross Profit</div>
+      <div class="kpi-value seafoam">$900K</div>
+      <div class="kpi-sub">31.3% margin</div>
+      <div class="kpi-trend up">On track</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">YTD EBITDA</div>
+      <div class="kpi-value rose">($719K)</div>
+      <div class="kpi-sub">Seasonal trough — Q1 structural</div>
+      <div class="kpi-trend watch">Normalizing H2</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">2026 Full Year Target</div>
+      <div class="kpi-value seafoam">$25M+</div>
+      <div class="kpi-sub">15–18% EBITDA</div>
+      <div class="kpi-trend up">H2 order book strong</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">Q1 Action Items</span><span style="color:var(--emerald);font-size:10px;">6 of 8 complete</span></div>
+      <div class="prog-wrap">
+        <div class="prog-label"><span>Completion</span><span style="color:var(--emerald);">75%</span></div>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;"></div></div>
+      </div>
+      <table class="status-table">
+        <tbody>
+          <tr><td>01</td><td>EBITDA normalized — banking conversations active</td><td><span class="badge complete">Complete</span></td></tr>
+          <tr><td>02</td><td>PNC outreach — Jeff Martinez</td><td><span class="badge complete">Complete</span></td></tr>
+          <tr><td>03</td><td>Strategic plan forwarded to Cory, Ben, Adela</td><td><span class="badge complete">Complete</span></td></tr>
+          <tr><td>04</td><td>Board feedback digested — pipeline reprioritized</td><td><span class="badge complete">Complete</span></td></tr>
+          <tr><td>05</td><td>Tim Waters follow-up — upskilling plan</td><td><span class="badge complete">Complete</span></td></tr>
+          <tr><td>06</td><td>Additional operational metrics — integration thoughts</td><td><span class="badge progress">In Progress</span></td></tr>
+          <tr><td>07</td><td>Outstanding NDAs — executed copies</td><td><span class="badge progress">In Progress</span></td></tr>
+          <tr><td>08</td><td>SharePoint invites — data room access confirmed</td><td><span class="badge complete">Complete</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="letter-card">
+        <div class="letter-tag">Annual Letter · First Edition · 2025</div>
+        <div class="letter-quote">"The standard by which every future Sisu letter will be measured."</div>
+        <div class="letter-meta">
+          <div class="lm-item"><span class="lm-label">Purpose</span><span class="lm-val">Commits publicly to our capital filter</span></div>
+          <div class="lm-item"><span class="lm-label">Flywheel</span><span class="lm-val">Inbound from family offices</span></div>
+          <div class="lm-item"><span class="lm-label">Audience</span><span class="lm-val">Founders · Co-investors · Families</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-title-left">Key Milestones This Quarter</span></div>
+        <div class="hk-row">
+          <div class="hk-icon">⚡</div>
+          <div><div class="hk-label">Banking Activated</div><div class="hk-text">PNC renewal active. Wintrust + BMO opened via Adela Cepeda.</div></div>
+        </div>
+        <div class="hk-row">
+          <div class="hk-icon">📄</div>
+          <div><div class="hk-label">Annual Letter Published</div><div class="hk-text">Drawing inbound from family offices. Field Notes page in development.</div></div>
+        </div>
+        <div class="hk-row">
+          <div class="hk-icon">⚖️</div>
+          <div><div class="hk-label">Kit Shah Separation</div><div class="hk-text">Targeted close before May 30. Governance cleanup to follow.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VENUS -->
+<div class="tab-panel" id="tab-venus">
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">YTD Net Sales</div><div class="kpi-value midnight">$2.87M</div><div class="kpi-sub">Q1 2026</div></div>
+    <div class="kpi-card"><div class="kpi-label">YTD Gross Profit</div><div class="kpi-value seafoam">$900K</div><div class="kpi-sub">31.3% margin</div></div>
+    <div class="kpi-card"><div class="kpi-label">YTD EBITDA</div><div class="kpi-value rose">($719K)</div><div class="kpi-sub">Trough — normalizing H2</div></div>
+    <div class="kpi-card"><div class="kpi-label">Full Year Target</div><div class="kpi-value seafoam">$25M+</div><div class="kpi-sub">15–18% EBITDA</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">Revenue Trajectory · 2026</span></div>
+      <div class="chart-wrap tall"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">EBITDA Margin · Q1–Q4</span></div>
+      <div class="chart-wrap tall"><canvas id="marginChart"></canvas></div>
+    </div>
+  </div>
+
+  <div style="padding:14px 20px;background:var(--warm);border:1px solid var(--border);border-left:4px solid var(--seafoam);border-radius:0 6px 6px 0;margin-bottom:20px;">
+    <div style="font-size:13px;color:var(--muted);line-height:1.75;font-style:italic;">Venus runs at capacity 24/5 from May/June through November. Q1 is the structural seasonal trough. Crackers down YTD but order book for peak season points to finishing ahead. Poor absorption in trough months is the largest operating drag.</div>
+  </div>
+
+  <div class="sec-div">OGSM Scorecard · Four Priorities</div>
+  <div class="ogsm-grid">
+    <div class="ogsm-card">
+      <div class="ogsm-meta"><span class="ogsm-code">01 · Growth</span><span class="badge watch">Watch</span></div>
+      <div class="ogsm-head">$25M+ net sales</div>
+      <div class="ogsm-detail">Crackers behind YTD; peak season order book ahead. H2 capacity committed. South Shore DTC, GFI, TFM, Publix channel development. Four-brand architecture live.</div>
+    </div>
+    <div class="ogsm-card">
+      <div class="ogsm-meta"><span class="ogsm-code">02 · Profitability</span><span class="badge watch">Watch</span></div>
+      <div class="ogsm-head">15–18% EBITDA margin</div>
+      <div class="ogsm-detail">Q1 drag from PL timing, brand investment, taxes, compensation. Single-forecast discipline. Complexity and waste reduction underway.</div>
+    </div>
+    <div class="ogsm-card">
+      <div class="ogsm-meta"><span class="ogsm-code">03 · Reliability</span><span class="badge watch">Watch</span></div>
+      <div class="ogsm-head">Forecast accuracy · OTIF</div>
+      <div class="ogsm-detail">Direct cause of Q1 absorption hit. Salesforce-led forecasting with monthly review. Earlier seasonality planning.</div>
+    </div>
+    <div class="ogsm-card">
+      <div class="ogsm-meta"><span class="ogsm-code">04 · Maturity</span><span class="badge watch">Watch</span></div>
+      <div class="ogsm-head">Named process owners</div>
+      <div class="ogsm-detail">Operating cadence adherence. Weekly/monthly/quarterly reviews. ERP direction. Process ownership via AI tooling.</div>
+    </div>
+  </div>
+
+  <div class="col-6-4" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">Customer Outreach Initiative</span></div>
+      <div class="hk-row"><div class="hk-icon">G</div><div><div class="hk-label">GFI Partnership</div><div class="hk-text">Top 40 of 1,200 suppliers. South Shore into holiday showroom and Publix. Mariner fast-tracked, deli clamshells, 2–3oz charcuterie packs, e-com via Gourmet Dash.</div></div></div>
+      <div class="hk-row"><div class="hk-icon">T</div><div><div class="hk-label">The Fresh Market</div><div class="hk-text">Bridget Thurston owning PL rebuild under CMO Alyssa Vecchio. May 18 PL board presentation. Lavash fix underway. Saltines bag-in-box samples week of Apr 27.</div></div></div>
+      <div class="hk-row"><div class="hk-icon">S</div><div><div class="hk-label">South Shore DTC</div><div class="hk-text">New website and direct-to-consumer channel launching this quarter. Vertical brand storytelling.</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">Brand Architecture</span></div>
+      <div class="brand-row"><div class="brand-dot" style="background:var(--midnight);"></div><div class="brand-name-t">South Shore</div><div class="brand-desc-t">Ancient grain puff snacks · growth engine</div></div>
+      <div class="brand-row"><div class="brand-dot" style="background:var(--twilight);"></div><div class="brand-name-t">Mariner</div><div class="brand-desc-t">Snack crackers · branded + private label</div></div>
+      <div class="brand-row"><div class="brand-dot" style="background:var(--seafoam);"></div><div class="brand-name-t">Capecchio</div><div class="brand-desc-t">Entertainment + water crackers</div></div>
+      <div class="brand-row"><div class="brand-dot" style="background:var(--amber);"></div><div class="brand-name-t">Nejaime's</div><div class="brand-desc-t">Flatbreads</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="tab-panel" id="tab-roadmap">
+  <div class="sec-div">Venus 2026 Roadmap · Q2–Q4</div>
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:24px;">
+    <table class="roadmap-table">
+      <thead><tr><th>Workstream</th><th>Q2 2026</th><th>Q3 2026</th><th>Q4 2026</th></tr></thead>
+      <tbody>
+        <tr><td>Restructure</td><td>Kit Shah minority separation closes. Governance cleanup.</td><td>Clean foundation holds.</td><td style="color:var(--muted);">—</td></tr>
+        <tr><td>People</td><td>COO / Plant Manager search continues.</td><td>Hire lands. Onboarding and operational handoffs.</td><td>Full ownership of plant cadence and reliability KPIs.</td></tr>
+        <tr><td>Process (AI)</td><td>AI tooling scoped for reporting, forecasting, automation.</td><td>First AI-enabled workflows in production. Process owners named.</td><td>Full process-ownership layer with AI integrated across the stack.</td></tr>
+        <tr><td>Portfolio</td><td>Identify strategic bolt-on targets under Venus Brands.</td><td>Diligence on lead target. IC memo and capital decision.</td><td style="color:var(--muted);">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-div">Sisu 2026 · Strategic Throughlines</div>
+  <div style="background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <div class="through-row"><div class="through-track">Operator Relationships</div><div class="through-text">Continue developing relationships with CPG manufacturing targets — Partners Crackers, Westminster, and others. No pressure on timeline. The operating bench we are building is the gating item, not the deal pipeline. Non-food acquisition exploration begins after COO/Plant Manager hire lands.</div></div>
+    <div class="through-row"><div class="through-track">Public Markets</div><div class="through-text">Rocky Mountain Chocolate Factory (Nasdaq: RMCF). Take-private turnaround thesis. Activist-aligned CEO (Jeffrey Geygan). Margin inflection underway via dynamic pricing. Cocoa cost tailwind normalizing. Disciplined position-building and thesis development.</div></div>
+    <div class="through-row"><div class="through-track">Capital Base</div><div class="through-text">Soft-circle co-investor pool development. Family office relationships cultivated through Field Notes, the annual letter, and direct conversations. Building the flywheel for Phase 2.</div></div>
+  </div>
+</div>
+
+<!-- DEAL PIPELINE -->
+<div class="tab-panel" id="tab-pipeline">
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="card" style="border-top:3px solid var(--seafoam);">
+      <div class="card-title"><span class="card-title-left">Primary · Venus Acquisition Holdings</span><span class="badge priority">Primary ★</span></div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--midnight);margin-bottom:6px;">Partners Crackers</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:14px;">Seattle, WA · Diligence · Fast Kill Test pending</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px;">Highest priority acquisition. Strengthens footprint, customer base, and operational capacity. No capital without Delphi evaluation.</div>
+      <div style="padding:10px 14px;background:rgba(43,191,108,.08);border:1px solid rgba(43,191,108,.2);border-radius:4px;font-size:12px;color:var(--emerald);">Next: Complete Delphi evaluation. Draft 1-page IC memo. Advance SPV structure.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="card-title-left">Secondary · Screening Stage</span></div>
+      <table class="status-table">
+        <tbody>
+          <tr><td>—</td><td>Westminster Crackers</td><td><span class="badge planned">Screening</span></td></tr>
+          <tr><td>—</td><td>Nature's Intent</td><td><span class="badge planned">Screening</span></td></tr>
+          <tr><td>—</td><td>Matt's Cookies</td><td><span class="badge planned">Screening</span></td></tr>
+          <tr><td>—</td><td>Fantasy Baking</td><td><span class="badge planned">Screening</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:10px 14px;background:var(--warm);border:1px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">All require Fast Kill Test before any advancement</div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:3px solid var(--twilight);">
+    <div class="card-title"><span class="card-title-left">Public Markets · Farm Team</span><span class="badge building">Building</span></div>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;">
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--midnight);">RMCF</div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:10px;">Rocky Mountain Chocolate Factory · Nasdaq: RMCF · Take-private turnaround</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <span class="badge active">Activist CEO seated</span>
+          <span class="badge active">Margin inflection</span>
+          <span class="badge active">Cocoa tailwind</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.6;">Disciplined position-building and thesis development. Long-duration lens.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="discipline">
+    <div class="disc-label">Deal Discipline · Non-Negotiable</div>
+    <div class="disc-items">
+      <div class="disc-item">No deal advances without Fast Kill Test</div>
+      <div class="disc-item">No capital without full Delphi evaluation</div>
+      <div class="disc-item">No external narrative without 1-page IC memo</div>
+      <div class="disc-item">Passing is success when discipline holds</div>
+    </div>
+  </div>
+</div>
+
+<!-- BANKING -->
+<div class="tab-panel" id="tab-banking">
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="bank-card">
+      <div class="bank-name">PNC Bank</div>
+      <div class="bank-contact">Jeff Martinez · Primary Credit Facility</div>
+      <span class="badge active">Active · Priority One</span>
+      <div class="bank-note" style="margin-top:12px;">Primary credit facility. Renewal in process. EBITDA normalization complete.</div>
+    </div>
+    <div class="bank-card">
+      <div class="bank-name">Wintrust</div>
+      <div class="bank-contact">Carlos Cardenas, Group SVP · New Relationship</div>
+      <span class="badge active">Active</span>
+      <div class="bank-note" style="margin-top:12px;">13+ year specialist in middle market food manufacturing. Introduced via Adela Cepeda. ccardenas@wintrust.com</div>
+    </div>
+    <div class="bank-card">
+      <div class="bank-name">BMO</div>
+      <div class="bank-contact">Via Adela Cepeda · New Relationship</div>
+      <span class="badge active">Active</span>
+      <div class="bank-note" style="margin-top:12px;">Middle market, food manufacturing focus. Active conversation underway.</div>
+    </div>
+  </div>
+
+  <div class="sequencing">
+    <div class="seq-label">Sequencing Rule</div>
+    <div class="seq-text">EBITDA normalization complete. Banking conversations now active. PNC is priority one. Wintrust and BMO are parallel relationships, not replacements.</div>
+  </div>
+
+  <div class="sec-div" style="margin-top:20px;">Capital Structure · Four Layers</div>
+  <div style="background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <div class="cap-row"><div style="display:flex;align-items:center;gap:14px;flex:1;"><div class="cap-num active">1</div><div><div class="cap-name">Permanent Sisu Capital</div><div class="cap-desc">Balance sheet. Holds and compounds indefinitely. Never sells unless economics or people change.</div></div></div><span class="badge active">Active</span></div>
+    <div class="cap-row" style="border-top:1px solid var(--border);"><div style="display:flex;align-items:center;gap:14px;flex:1;"><div class="cap-num active">2</div><div><div class="cap-name">Venus Acquisition Holdings SPV</div><div class="cap-desc">Partners Crackers + 2 proprietary Q2 '26 targets. SPV structure for direct investor participation.</div></div></div><span class="badge active">Active</span></div>
+    <div class="cap-row" style="border-top:1px solid var(--border);"><div style="display:flex;align-items:center;gap:14px;flex:1;"><div class="cap-num building">3</div><div><div class="cap-name">Sisu Shared Services (SSS)</div><div class="cap-desc">~5% revenue intercompany charge across portfolio companies. Employees hold profit participation.</div></div></div><span class="badge building">Building</span></div>
+    <div class="cap-row" style="border-top:1px solid var(--border);"><div style="display:flex;align-items:center;gap:14px;flex:1;"><div class="cap-num planned">4</div><div><div class="cap-name">Farm Team (Public Markets)</div><div class="cap-desc">Long-term minority positions in undervalued public companies. Launch late 2026. RMCF is first.</div></div></div><span class="badge planned">Planned</span></div>
+  </div>
+</div>
+
+<!-- Q1 ACTIONS -->
+<div class="tab-panel" id="tab-actions">
+  <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+    <div class="kpi-card"><div class="kpi-label">Items Complete</div><div class="kpi-value seafoam">6</div><div class="kpi-sub">of 8 total</div></div>
+    <div class="kpi-card"><div class="kpi-label">In Progress</div><div class="kpi-value midnight">2</div><div class="kpi-sub">Metrics + NDAs</div></div>
+    <div class="kpi-card"><div class="kpi-label">Completion Rate</div><div class="kpi-value midnight">75%</div><div class="kpi-sub">Strong quarter</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title"><span class="card-title-left">Q1 2026 Action Item Review</span></div>
+    <div class="prog-wrap" style="margin-bottom:20px;">
+      <div class="prog-label"><span>Overall completion</span><span style="color:var(--emerald);">75% — 6 of 8 complete</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;"></div></div>
+    </div>
+    <table class="status-table">
+      <thead><tr style="border-bottom:1px solid var(--charcoal);"><th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:0 0 10px;font-weight:400;width:30px;">#</th><th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:0 0 10px;font-weight:400;">Action Item</th><th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:0 0 10px;font-weight:400;text-align:right;width:120px;">Status</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>Share normalized 2025 EBITDA and updated financials. Now active in banking conversations through Adela's introductions.</td><td><span class="badge complete">Complete</span></td></tr>
+        <tr><td>02</td><td>Outreach with PNC (Jeff Martinez) and other banking partners.</td><td><span class="badge complete">Complete</span></td></tr>
+        <tr><td>03</td><td>Forward 3–5 year strategic plan and summit summary to Cory, Ben, and Adela.</td><td><span class="badge complete">Complete</span></td></tr>
+        <tr><td>04</td><td>Digest board feedback on deal focus; reassess pipeline priorities.</td><td><span class="badge complete">Complete</span></td></tr>
+        <tr><td>05</td><td>Follow-up with Tim Waters on staff input and upskilling plan.</td><td><span class="badge complete">Complete</span></td></tr>
+        <tr><td>06</td><td>Share additional operational metrics and integration thoughts.</td><td><span class="badge progress">In Progress</span></td></tr>
+        <tr><td>07</td><td>Follow up on outstanding NDAs and collect executed copies.</td><td><span class="badge progress">In Progress</span></td></tr>
+        <tr><td>08</td><td>Resend SharePoint invites; confirm data room access for all advisors.</td><td><span class="badge complete">Complete</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-3">
+    <div class="card"><div class="kpi-label" style="margin-bottom:8px;">Outstanding NDAs</div><div style="font-size:13px;color:var(--text2);line-height:1.6;">Collection continues. Coordinate with all advisors to confirm executed copies are on file.</div></div>
+    <div class="card"><div class="kpi-label" style="margin-bottom:8px;">Operational Metrics</div><div style="font-size:13px;color:var(--text2);line-height:1.6;">Additional metrics and integration thoughts to be shared with board ahead of Q3 meeting.</div></div>
+    <div class="card"><div class="kpi-label" style="margin-bottom:8px;">Next Board Meeting</div><div style="font-size:13px;color:var(--text2);line-height:1.6;">Q3 2026 — date to be confirmed. Operating review and 2026 H2 outlook.</div></div>
+  </div>
+</div>
+
+</div>
+
+<footer style="border-top:1px solid var(--border);padding:20px 40px;background:#fff;">
+  <div style="max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Sisu Investment Holdings · Advisory Board · Q2 2026 · 420 N. Wabash Suite 500 · Chicago, IL 60611</span>
+    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Confidential · April 23, 2026</span>
+  </div>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'venus') initCharts();
+}
+
+let chartsInit = false;
+function initCharts() {
+  if (chartsInit) return;
+  chartsInit = true;
+
+  const MIDNIGHT = '#191970';
+  const SEAFOAM = '#2BBF6C';
+  const EMERALD = '#2E8B57';
+  const ROSE = '#B83232';
+  const AMBER = '#C8841A';
+  const MUTED = '#777672';
+  const BORDER = '#E5E4E2';
+
+  Chart.defaults.color = MUTED;
+  Chart.defaults.font.family = "'DM Mono', monospace";
+  Chart.defaults.font.size = 10;
+
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Q1 Actual', 'Q2 Proj', 'Q3 Proj', 'Q4 Proj', 'FY Target'],
+      datasets: [
+        {
+          label: 'Revenue ($M)',
+          data: [2.87, 5.2, 9.8, 7.13, null],
+          backgroundColor: [MIDNIGHT + 'CC', MIDNIGHT + '88', MIDNIGHT + 'AA', MIDNIGHT + 'BB'],
+          borderRadius: 3,
+          borderSkipped: false,
+        },
+        {
+          label: 'Full Year Target',
+          data: [null, null, null, null, 25],
+          backgroundColor: SEAFOAM + '33',
+          borderColor: SEAFOAM,
+          borderWidth: 2,
+          borderRadius: 3,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => '$' + c.raw + 'M' } } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: BORDER }, border: { display: false }, ticks: { callback: v => '$' + v + 'M' } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('marginChart'), {
+    type: 'line',
+    data: {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      datasets: [
+        {
+          label: 'EBITDA Margin',
+          data: [-25, 4, 18, 22],
+          borderColor: MIDNIGHT,
+          backgroundColor: MIDNIGHT + '0D',
+          borderWidth: 2.5,
+          pointBackgroundColor: [ROSE, AMBER, SEAFOAM, SEAFOAM],
+          pointRadius: 6,
+          fill: true,
+          tension: .35
+        },
+        {
+          label: 'Target (15%)',
+          data: [15, 15, 15, 15],
+          borderColor: SEAFOAM,
+          borderWidth: 1.5,
+          borderDash: [5, 5],
+          pointRadius: 0,
+          fill: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.raw + '%' } } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: BORDER }, border: { display: false }, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
